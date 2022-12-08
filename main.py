@@ -1,5 +1,13 @@
+from BA.BeesAlgorithm import BeesAlgorithm
+from clique.CLiqueProblem import CliqueProblem
+from optimize import optimize_algorithm
+
+
 def main():
-    pass
+    optimized_values = optimize_algorithm(
+        BeesAlgorithm(),
+        CliqueProblem()
+    )
 
 
 if __name__ == '__main__':
