@@ -20,7 +20,7 @@ class OptimizedAlgorithm(ABC):
 
 @dataclass
 class AlgorithmResult:
-    objective_value: Callable
+    objective_value: float
     parameters: dict[str, float]
 
     def __lt__(self, other: Self) -> bool:
@@ -65,11 +65,13 @@ def optimize_algorithm(
         objective_function: Callable,
         max_execution_time: float,
         iterations: int = 10,
-        repeats: int = 10
+        repeats: int = 10,
+        logging: bool = True
 ) -> dict[str, float]:
     params_list = list(parameters.keys())
     param_idx = 0
     fixed_params = {k: v[0] for k, v in parameters.items()}
+    best_result = AlgorithmResult(0, fixed_params)
     for i in range(iterations):
         param_name = params_list[param_idx]
 
@@ -78,8 +80,9 @@ def optimize_algorithm(
         best_result = max(evaluate_in_range(
             algorithm, problem, objective_function, max_execution_time,
             fixed_params, param_name, *parameters[param_name], repeats
-        ))
-        print(f'Iteration {i}: {best_result.objective_value}')
+        )[::-1])
+        if logging:
+            print(f'Iteration {i}: {best_result.objective_value}, {best_result.parameters}')
         fixed_params[param_name] = best_result.parameters[param_name]
 
         param_idx = (param_idx + 1) % len(params_list)
